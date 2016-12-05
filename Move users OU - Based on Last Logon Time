@@ -1,0 +1,51 @@
+<# 
+.SYNOPSIS 
+
+.DESCRIPTION
+
+.PARAMETER 
+
+.EXAMPLE
+
+.LINK
+
+.NOTES
+Version History 
+v1.0 - James Ashworth - 20161201 10:06
+#>
+function Get-ADUserLastLogon([string]$userName)
+{
+  $dcs = Get-ADDomainController -Filter {Name -like "*"} -Server "XXXX.XXX.com"
+  $time = 0
+
+  foreach($dc in $dcs) {
+    $hostname = $dc.HostName
+    $user = Get-ADUser $userName -Server $hostname | Get-ADObject -Properties lastLogon
+  
+    if($user.LastLogon -gt $time) {
+      $time = $user.LastLogon
+    }
+  }
+  $dt = [DateTime]::FromFileTime($time)
+  
+  return $dt
+}
+
+
+$UserList = Get-ADUser -Server "XXXXXXX.com" -SearchBase "OU=Bla bla bla,OU=HO Users and Groups,OU=BLA BLA BLA,DC=XXX,DC=com" -Filter {Enabled -eq $false}
+
+foreach($User in $UserList)
+{
+    $Username = $User.SAMAccountName
+    $LoginTime = Get-ADUserLastLogon -Username $Username
+    
+    #Write-Host $LoginTime
+    #Write-Host $(get-date).AddDays(-30)#.ToString("MM/dd/yyyy hh:mm:ss")
+    
+    if($LoginTime -lt (get-date).AddDays(-30)) #.ToString("MM/dd/yyyy hh:mm:ss"))
+    {
+        Get-ADUser $Username | Move-ADObject -TargetPath "OU=Disabled Accounts OU=Bla bla bla,OU=HO Users and Groups,OU=BLA BLA BLA,DC=XXX,DC=com"
+        
+    }
+}
+
