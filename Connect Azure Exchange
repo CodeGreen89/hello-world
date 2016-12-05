@@ -1,0 +1,18 @@
+function Connect-AzureExchange
+{
+    param 
+    (
+        [Parameter(position=0, Mandatory=$true)] [string]$ExchangeURI 
+		, [Parameter(position=1, Mandatory=$true)] [PSCredential]$ServiceAccount
+    )
+
+	$Session = New-PSSession –ConfigurationName Microsoft.Exchange `
+		–ConnectionUri $ExchangeURI  `
+		-Credential $ServiceAccount `
+		–Authentication Basic `
+		-AllowRedirection
+
+	#Import-PSSession $Session
+
+	$Session
+}
