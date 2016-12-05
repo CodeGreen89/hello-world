@@ -1,0 +1,36 @@
+function Remove-365License
+{
+    param 
+    (
+        [Parameter(position=0, Mandatory=$true)] [string]$ExchangeURI 
+		, [Parameter(position=0, Mandatory=$true)] [PSObject]$ADUser
+		, [Parameter(position=1, Mandatory=$true)] [PSCredential]$ServiceAccount
+    )
+
+	$UPN = Get-UserUPN -ExchangeURI $ExchangeURI `
+					-ServiceAccount $ServiceAccount `
+					-User $ADUser
+
+	$Session = Connect-AzureExchange -ExchangeURI $ExchangeURI -ServiceAccount $ServiceAccount
+	Import-PSSession $Session 
+
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:VISIOCLIENT
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:PROJECTCLIENT
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:CRMPLAN2
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:YAMMER_ENTERPRISE_STANDALONE
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:POWER_BI_PRO
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:ENTERPRISEPACK
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:MCOEV
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:MCOPSTN1
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:CRMSTANDARD
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:CRMTESTINSTANCE
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:POWER_BI_STANDARD
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:EMS
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:MCOMEETADV
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:RIGHTSMANAGEMENT_ADHOC
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:MCOSTANDARD
+	Set-MsolUserLicense -UserPrincipalName $UPN -RemoveLicenses XXXXXXXXXX:STANDARDPACK
+
+	Remove-PSSession $Session 
+
+}
