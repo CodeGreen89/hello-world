@@ -1,0 +1,24 @@
+#Test if an account is recursively a member of Domain Admin (Due to Nested Groups)
+
+Function Test-ADDomainAdmin {
+param ($user)
+        trap {return "error"}
+        If (
+            Get-ADUser `
+                -Filter "MemberOf -RecursiveMatch '$((Get-ADGroup "Domain Admins").DistinguishedName)'" `
+                -SearchBase $((get-aduser $user).DistinguishedName))
+             {$true}
+            Else {$false}
+}
+# ! Input username below to query !
+Test-ADDomainAdmin James.Ashworth.ADM
+
+
+
+#Examples
+        #True (Is a member of Domain Admins Nested)
+#        Test-ADDomainAdmin James.Ashworth.ADM
+        #False (Isn't a member of Domain Admins Nested)
+#        Test-ADDomainAdmin ashworj
+        #Error (Invalid Username)
+#        Test-ADDomainAdmin ImBatman
